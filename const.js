@@ -7,9 +7,9 @@ if (!WIT_TOKEN) {
 }
 
 // Messenger API parameters
-const FB_PAGE_TOKEN = process.env.FB_PAGE_TOKEN;
+const FB_PAGE_TOKEN = process.env.GO_FOR_SELF_BOT_PAGE_TOKEN;
 
-var FB_VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN;
+var FB_VERIFY_TOKEN = process.env.GO_FOR_SELF_BOT_VERIFY;
 if (!FB_VERIFY_TOKEN) {
   FB_VERIFY_TOKEN = "just_do_it";
 }
