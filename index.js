@@ -1,13 +1,15 @@
-'use strict';
-
 // Messenger API integration example
 // We assume you have:
 // * a Wit.ai bot setup (https://wit.ai/docs/quickstart)
 // * a Messenger Platform setup (https://developers.facebook.com/docs/messenger-platform/quickstart)
 // You need to `npm install` the following dependencies: body-parser, express, request.
-//
+
+/* eslint-disable no-console */
+
 const bodyParser = require('body-parser');
 const express = require('express');
+const https = require('https');
+const fs = require('fs');
 
 // get Bot, const, and Facebook API
 const bot = require('./bot.js');
@@ -30,7 +32,7 @@ const sessions = {};
 const findOrCreateSession = (fbid) => {
   let sessionId;
   // Let's see if we already have a session for the user fbid
-  Object.keys(sessions).forEach(k => {
+  Object.keys(sessions).forEach((k) => {
     if (sessions[k].fbid === fbid) {
       // Yep, got it!
       sessionId = k;
@@ -40,10 +42,10 @@ const findOrCreateSession = (fbid) => {
     // No session found for user fbid, let's create a new one
     sessionId = new Date().toISOString();
     sessions[sessionId] = {
-      fbid: fbid,
+      fbid,
       context: {
-        _fbid_: fbid
-      }
+        _fbid_: fbid,
+      },
     }; // set context, _fid_
   }
   return sessionId;
@@ -52,12 +54,25 @@ const findOrCreateSession = (fbid) => {
 // Starting our webserver and putting it all together
 const app = express();
 app.set('port', PORT);
-app.listen(app.get('port'));
+// app.listen(app.get('port'));
 app.use(bodyParser.json());
-console.log("I'm wating for you @" + PORT);
+// console.log("I'm wating for you @" + PORT);
+
+// Add in the path to the Let's Encrypt files
+const sslOptions = {
+  key: fs.readFileSync('/etc/letsencrypt/live/golightlyplus.com/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/golightlyplus.com/fullchain.pem'),
+  ca: fs.readFileSync('/etc/letsencrypt/live/golightlyplus.com/chain.pem'),
+};
+
+// startup the https server
+https.createServer(sslOptions, app).listen(app.get('port'), () => {
+  // eslint-disable-next-line no-console
+  console.log(`Started CM Movies app on port ${app.get('port')}.`);
+});
 
 // index. Let's say something fun
-app.get('/', function(req, res) {
+app.get('/', (req, res) => {
   res.send('"Only those who will risk going too far can possibly find out how far one can go." - T.S. Eliot');
 });
 
@@ -79,7 +94,6 @@ app.post('/webhook', (req, res) => {
   // Parsing the Messenger API response
   const messaging = FB.getFirstMessagingEntry(req.body);
   if (messaging && messaging.message) {
-
     // Yay! We got a new message!
 
     // We retrieve the Facebook user ID of the sender
@@ -99,7 +113,7 @@ app.post('/webhook', (req, res) => {
       // Let's reply with an automatic message
       FB.fbMessage(
         sender,
-        'Sorry I can only process text messages for now.'
+        'Sorry I can only process text messages for now.',
       );
     } else if (msg) {
       // We received a text message
@@ -128,7 +142,7 @@ app.post('/webhook', (req, res) => {
             // Updating the user's current session state
             sessions[sessionId].context = context;
           }
-        }
+        },
       );
     }
   }
