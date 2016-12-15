@@ -1,5 +1,3 @@
-'use strict';
-
 // See the Send API reference
 // https://developers.facebook.com/docs/messenger-platform/send-api-reference
 const request = require('request');
@@ -55,8 +53,4 @@ const getFirstMessagingEntry = (body) => {
 };
 
 
-module.exports = {
-  getFirstMessagingEntry: getFirstMessagingEntry,
-  fbMessage: fbMessage,
-  fbReq: fbReq
-};
+module.exports = { getFirstMessagingEntry, fbMessage, fbReq };
