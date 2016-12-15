@@ -82,7 +82,7 @@ app.get('/webhook', (req, res) => {
     throw new Error('missing FB_VERIFY_TOKEN');
   }
   if (req.query['hub.mode'] === 'subscribe' &&
-    req.query['hub.verify_token'] === Config.FB_VERIFY_TOKEN) {
+  req.query['hub.verify_token'] === Config.FB_VERIFY_TOKEN) {
     res.send(req.query['hub.challenge']);
   } else {
     res.sendStatus(400);
@@ -139,7 +139,7 @@ app.post('/webhook', (req, res) => {
             // Updating the user's current session state
             sessions[sessionId].context = context;
           }
-        },
+        } // eslint-disable-line comma-dangle
       );
     }
   }
